@@ -40,8 +40,12 @@ exports.login = async function (req, res, next) {
     let passwordCorrect = false;
     let user;
 
+    console.log(name);
+    console.log(password);
+
     try {
         user = await User.getUserByName(name);
+        console.log(user);
         if (user.length > 0) {
             passwordCorrect = await bcrypt.compare(password, user[0].password);
         }

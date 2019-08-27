@@ -1,12 +1,20 @@
 <template>
-  <b-container fluid id="app">
+  <b-container id="app">
+    <app-nav-bar></app-nav-bar>
+    <br>
     <router-view/>
   </b-container>
 </template>
 
 <script>
+
+import AppNavBar from "@/components/AppNavBar";
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    AppNavBar
+  }
 }
 </script>
 
