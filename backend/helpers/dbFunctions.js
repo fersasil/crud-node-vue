@@ -40,104 +40,76 @@ module.exports = class {
     }
 
 
-    // selectWhere(params) {
-    //     //Retorna uma promise
-    //     const commonInfo = this;
+    async query(query, args) {
+        return new Promise(async (resolve, reject) => {
+            const queryVar = args;
+            const queryStr = query;
+            let conn;
+            try {
+                conn = await pool.getConnection()
+                const rows = await conn.query(queryStr, queryVar)
+                conn.end();
+                resolve(rows);
+            }
+            catch (err) {
+                conn.end();
+                reject(err);
+                //not connected
+            };
+        });
+    }
 
-    //     return new Promise(function (resolve, reject) {
-    //         // Define as variaveis para poderem ser utilizadas no futuro
-    //         //const queryVar = [args];
-    //         let queryStr = `SELECT ${params.select} `;
-    //         queryStr += `FROM ${commonInfo.table} `;
+    async findByName(name) {
+        const commonInfo = this;
 
-    //         if (params.where) queryStr += `WHERE ${params.where}`;
+        return new Promise(async function (resolve, reject) {
 
+            try {
+                const result = await this.selectWhere({ from: commonInfo.table, select: '*', where: `name = '${name}'` });
+                resolve(result);
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
 
-    //         pool.getConnection()
-    //             .then(conn => { //Retorna a conexão
-    //                 return conn.query(queryStr);
-    //             }).then((rows) => { // Retorna o resultado
-    //                 console.log('oi')
-    //                 conn.end();
-    //                 process.exit();
-    //                 const res = rows;
-    //                 console.log(res);
-    //                 if (rows.length > 0) {
-    //                     const res = [...rows]; // Tira o meta com o operador spread 
-    //                     resolve(res);
-    //                 } else {
-    //                     resolve(false);
-    //                 }
-    //                 conn.end();
-
-    //             })
-    //             .catch(err => {
-    //                 // conn.end();
-    //                 console.log(err)
-    //                 resolve(err)
-    //             }); // Handle errors
+    // async createNewUser(name, email) {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const result = await this.query("INSERT INTO " + this.table + "(`name`) VALUES (?)", [name]);
+    //             resolve(result);
+    //         } catch (err) {
+    //             reject(err);
+    //         }
     //     });
     // }
 
-    query(query, args) {
-        const commonInfo = this;
+    // SELECT email FROM tabela WHERE email = 'email'
+    // attribute = name  
+    //SELECT attribute FROM this.table WHERE attribute = 'item'  
+    // item -> g@g.com
 
-        return new Promise((resolve, reject) => {
-            const queryVar = args;
-            const queryStr = query;
+    async isAvaliable(attribute, item) {
 
-            pool.getConnection()
-                .then(conn => {
-
-                    conn.query(queryStr, queryVar)
-                        .then((rows) => {
-                            conn.end();
-                            resolve(rows);
-                            console.log(rows); //[ {val: 1}, meta: ... ]
-                            //return conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-                        })
-                        .catch(err => {
-                            //handle error
-                            reject(err)
-                            conn.end();
-                        })
-
-                }).catch(err => {
-                    reject(err);
-                    //not connected
+        return new Promise(async (resolve, reject) => {
+            try {
+                const result = await this.selectWhere({from: this.table, select: attribute, where: `${attribute} = '${item}'`
                 });
+                resolve(result);
+            } catch (err) {
+                reject(err);
+            }
         });
-    }
 
-    findByName(name) {
-        const commonInfo = this;
-
-        return new Promise((resolve, reject) => {
-            this.selectWhere({ from: commonInfo.table, select: '*', where: `name = '${name}'` })
-                .then(result => resolve(result))
-                .catch(err => reject(err));
-        });
-    }
-
-    createNewUser(name, email) {
-        const commonInfo = this;
-
-        return new Promise((resolve, reject) => {
-            this.query("INSERT INTO " + commonInfo.table + "(`name`) VALUES (?)", [name])
-                .then(result => {
-                    resolve(true);
-                })
-                .catch(err => reject(err));
-        });
     }
 
     createUser(params) {
         const commonInfo = this;
 
         return new Promise((resolve, reject) => {
-            this.query("INSERT INTO " + commonInfo.table + "(`name`, `password`) VALUES (?, ?)", [params.name, params.password])
+            this.query("INSERT INTO " + commonInfo.table + "(`name`, `password`, `email`) VALUES (?, ?, ?)", [params.name, params.password, params.email])
                 .then(result => {
-                    resolve(true);
+                    resolve(result);
                 })
                 .catch(err => reject(err));
         });

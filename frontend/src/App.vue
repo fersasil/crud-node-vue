@@ -1,26 +1,26 @@
 <template>
-  <b-container id="app">
+  <div>
     <app-nav-bar></app-nav-bar>
-    <br>
-    <router-view/>
-  </b-container>
+    <b-container id="app">
+      <router-view />
+    </b-container>
+  </div>
 </template>
 
 <script>
-
 import AppNavBar from "@/components/AppNavBar";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     AppNavBar
   }
-}
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

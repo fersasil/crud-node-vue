@@ -22,10 +22,10 @@ exports.createUser = async function (req, res, next) {
 };
 
 exports.create = async function (req, res, next) {
-    const { name, password } = req.body;
+    const { name, password, email } = req.body;
 
     try {
-        const created = await User.createUser({ name, password });
+        const created = await User.createUser({ name, password, email });
         console.log(created);
 
         res.status(200).json(created);
@@ -39,9 +39,6 @@ exports.login = async function (req, res, next) {
     const { name, password } = req.body;
     let passwordCorrect = false;
     let user;
-
-    console.log(name);
-    console.log(password);
 
     try {
         user = await User.getUserByName(name);

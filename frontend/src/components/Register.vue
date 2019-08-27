@@ -1,9 +1,13 @@
 <template>
   <div>
+    <b-row class="mb-4"><h1 class="h1">Register a new account!</h1></b-row>
     <b-form-input v-model="form.name" placeholder="Enter your name"></b-form-input>
     <div v-if="form.name" class="mt-2">Value: {{ form.name }}</div>
     <hr />
-    <b-form-input v-model="form.password" placeholder="Enter your password"></b-form-input>
+    <b-form-input v-model="form.email" placeholder="Enter your email"></b-form-input>
+    <div v-if="form.email" class="mt-2">Value: {{ form.email }}</div>
+    <hr />
+    <b-form-input @blur="verifyEmail" @focusout="verifyEmail" v-model="form.password" placeholder="Enter your password"></b-form-input>
     <div v-if="form.password" class="mt-2">Value: {{ form.password }}</div>
     <hr />
     <b-button @click="fetchData">Register</b-button>
@@ -30,6 +34,9 @@ export default {
     };
   },
   methods: {
+    verifyEmail(){
+      console.log(this.form.email);
+    }, 
       fetchData(){
         const config = {
             headers: { "Content-Type": "application/json" }
@@ -37,7 +44,8 @@ export default {
 
         const data = {
             name: this.form.name,
-            password: this.form.password
+            password: this.form.password,
+            email: this.form.email
         };
 
         axios.post('create', data, config)
