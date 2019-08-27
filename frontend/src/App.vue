@@ -1,9 +1,10 @@
 <template>
-  <b-container id="app">
+<div>
     <app-nav-bar></app-nav-bar>
-    <br>
-    <router-view/>
-  </b-container>
+    <b-container id="app">
+      <router-view/>
+    </b-container>
+</div>
 </template>
 
 <script>

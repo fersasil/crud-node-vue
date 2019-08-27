@@ -7,8 +7,11 @@
     <div v-if="password" class="mt-2">Value: {{ password }}</div>
     <hr />
     <b-button @click="fetchData">Entrar</b-button>
-    <hr v-if="token">
-    <div v-if="token" class="mt-2">{{ token }}</div>
+
+    <b-row v-if="token">
+      <hr>
+      <div class="mt-2">{{ token }}</div>
+    </b-row>
   </div>
 </template>
 
