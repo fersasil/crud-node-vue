@@ -37,12 +37,17 @@ export default new Router({
             {
                 path: '/',
                 name: 'Dashboard',
-                component: userProfile
+                // component: userProfile
             },
             {
                 path: 'all-users',
                 component: Users,
                 name: 'allUsers'
+            },
+            {
+                path: 'profile/:userId',
+                component: userProfile,
+                name: 'UserProfile'
             }
                 
         ]

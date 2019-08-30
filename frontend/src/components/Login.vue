@@ -5,25 +5,18 @@
         <b>Por favor, corrija o(s) seguinte(s) erro(s):</b>
         <ul>
           <b-row>
-          <p v-for="(error, i) in errors" :key="i">{{ error.error}}</p>
+            <p v-for="(error, i) in errors" :key="i">{{ error.error}}</p>
           </b-row>
         </ul>
       </b-alert>
     </p>
-
-    <p v-if="success">
-      <b-alert variant="success" show>
-        <b>{{token}}</b>
-      </b-alert>
-    </p>
-
-    <b-form-input v-model="email" placeholder="Enter your email"></b-form-input>
-    <div v-if="email" class="mt-2">Value: {{ email }}</div>
-    <hr />
-    <b-form-input v-model="password" placeholder="Enter your password"></b-form-input>
-    <div v-if="password" class="mt-2">Value: {{ password }}</div>
-    <hr />
-    <b-button @click="fetchData">Login</b-button>
+    <b-card  style="max-width: 75rem;" title="Login">
+    <div class="w-50 mx-auto">
+      <b-form-input class="mb-4 mt-4" v-model="email" placeholder="Enter your email"></b-form-input>
+      <b-form-input class="mb-4" v-model="password" placeholder="Enter your password"></b-form-input>
+      <b-button @click="fetchData">Login</b-button>
+    </div>
+    </b-card>
   </div>
 </template>
 
@@ -38,13 +31,12 @@ export default {
       password: "",
       token: "",
       errors: [],
-      success: ''
+      success: ""
     };
   },
   methods: {
     fetchData() {
-      this.errors = [],
-      this.success = false;
+      (this.errors = []), (this.success = false);
 
       const config = {
         headers: { "Content-Type": "application/json" }
@@ -60,18 +52,24 @@ export default {
         .then(res => {
           this.token = res.data.token;
           this.success = true;
-          
+
           let responseInString = JSON.stringify(res.data);
-          let responseEncoded = Buffer.from(responseInString).toString("base64");
+          let responseEncoded = Buffer.from(responseInString).toString(
+            "base64"
+          );
           console.log(responseEncoded);
 
           localStorage.userInfo = responseEncoded;
-          this.$router.push({name: 'Dashboard'});
+          this.$router.push({ name: "Dashboard" });
         })
         .catch(err => {
-          this.errors.push({error: "Email or password invalids!"});
+          this.errors.push({ error: "Email or password invalids!" });
         });
     }
   }
 };
 </script>
+
+<style scoped>
+
+</style>

@@ -101,7 +101,7 @@ module.exports = class {
         return new Promise((resolve, reject) => {
             this.query("INSERT INTO " + commonInfo.table + "(`name`, `password`, `email`) VALUES (?, ?, ?)", [params.name, params.password, params.email])
                 .then(result => {
-                    resolve(true);
+                    resolve(result);
                 })
                 .catch(err => reject(err));
         });

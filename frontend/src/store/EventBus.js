@@ -3,6 +3,12 @@ import Vue from 'vue';
 export const EventBus = new Vue({
     data: {
         userLoggedIn: false,
-        userInfo: []
+        userInfo: {}
+    },
+    methods: {
+        setLoginData(user){
+            this.userInfo = user,
+            this.userLoggedIn = true;
+        }
     }
 });

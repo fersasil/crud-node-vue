@@ -2,7 +2,15 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = "this is my test of a secret. It can be anything";
+const JWT_SECRET = "this is my test secret. It can be anything";
+
+const getToken = user =>{
+    return jwt.sign({
+        name: user.name,
+        id: user.id
+    }, JWT_SECRET, { expiresIn: '1h' });
+}
+
 
 exports.getAllUsers = async(req, res, next) => {
     const allUsers = await User.findAllUser();
@@ -39,9 +47,17 @@ exports.create = async function(req, res, next) {
     }
 
     try {
-        const created = await User.createUser({ name, password, email });
+        const dbResonse = await User.createUser({ name, password, email });
 
-        res.status(200).json(created);
+        //Id should be hashed?
+
+        const token = getToken({name, id: dbResonse.id});
+
+        res.status(200).json({
+            id: dbResonse.insertId,
+            name: name,
+            token: token
+        });
     } catch (err) {
         err.statusCode = 400;
         throw err;
@@ -75,10 +91,7 @@ exports.login = async function(req, res, next) {
     }
     // Gera o token para login
 
-    const token = jwt.sign({
-        name: user[0].name,
-        id: user[0].id
-    }, JWT_SECRET, { expiresIn: '1h' });
+    const token = getToken(user[0]);
 
     res.status(200).json({
         token: token,

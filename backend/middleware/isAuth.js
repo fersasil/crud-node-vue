@@ -10,6 +10,9 @@ module.exports = (req, res, next) => {
     const token = authorization ? authorization.split(' ')[1] : false;
     let decodedToken;
 
+    console.log(token);
+    process.exit();
+
     if (token) {
 
         try {
