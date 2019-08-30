@@ -26,7 +26,6 @@ exports.create = async function(req, res, next) {
     const EMAIL_INVALID = 'EMAIL_INVALID';
     // Verificar se o email esta cadastrado no sistema
     const isNotAvaliable = await User.emailNotAvaliabel(email);
-    console.log(isNotAvaliable);
 
     if (isNotAvaliable) {
         res.status(200).json({
@@ -50,19 +49,21 @@ exports.create = async function(req, res, next) {
 };
 
 exports.login = async function(req, res, next) {
-    const { name, password } = req.body;
+    const { email, password } = req.body;
     let passwordCorrect = false;
     let user;
-
-    console.log(name);
-    console.log(password);
+    
 
     try {
-        user = await User.getUserByName(name);
-        console.log(user);
-        if (user.length > 0) {
-            passwordCorrect = await bcrypt.compare(password, user[0].password);
+        user = await User.getUserByEmail(email);
+
+        if (!user) {
+            //Usuario não encontrado!
+            res.status(401).json({ error: -1, message: 'Password or user incorrect' });        
+            return
         }
+
+        passwordCorrect = await bcrypt.compare(password, user[0].password);
     } catch (err) {
         err.statusCode = 401;
         throw err;
@@ -81,13 +82,13 @@ exports.login = async function(req, res, next) {
 
     res.status(200).json({
         token: token,
-        userId: user[0].id
+        userId: user[0].id,
+        name: user[0].name
     });
 };
 
 exports.deleteUser = async(req, res, next) => {
     const { id } = req.params;
-    console.log(id);
     try {
         const isDeleted = await User.deleteById(id);
         res.status(200).json({ isDeleted });

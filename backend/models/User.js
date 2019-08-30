@@ -4,10 +4,11 @@ const dbHelper = require('../helpers/dbFunctions');
 const dbFunc = new dbHelper('usuario');
 
 module.exports = class {
-    constructor(name, email, password) {
-        this.name = name;
-        this.password = password;
-        this.email = email;
+    constructor(params) {
+        this.name = params.name;
+        this.password = params.password;
+        this.email = params.email;
+        this.id = params.id;
     }
 
     static async emailNotAvaliabel(email) {
@@ -32,6 +33,18 @@ module.exports = class {
 
     static async getUserByName(name) {
         return dbFunc.findByName(name);
+    }
+
+    static async getUserByEmail(email) {
+        const res = await dbFunc.findByEmail(email);
+        if (res === false) {
+            return false;
+        }
+
+        res.email = email;
+        
+        return res;
+
     }
 
     static async updateUserById(id, params) {

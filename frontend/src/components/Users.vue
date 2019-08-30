@@ -8,7 +8,7 @@
       </b-col>
       <b-col md="6">
         <b-list-group>
-          <b-list-group-item v-for="n in names" :key="n">ID: {{n.id}} Name: {{n.name}}</b-list-group-item>
+          <b-list-group-item v-for="(n, i) in names" :key="i">ID: {{n.id}} Name: {{n.name}}</b-list-group-item>
         </b-list-group>
       </b-col>
     </b-row>

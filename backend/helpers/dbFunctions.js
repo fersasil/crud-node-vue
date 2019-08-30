@@ -29,9 +29,9 @@ module.exports = class {
 
                 if (rows.length > 0) {
                     const dataInRows = [...rows];
-                    dataInRows.foundSomething = true;
+                    // dataInRows.foundSomething = true;
                     resolve(dataInRows);
-                } else resolve({ foundSomething: false });
+                } else resolve(false);
 
             } catch (err) {
                 conn.end();
@@ -67,6 +67,17 @@ module.exports = class {
 
         return new Promise((resolve, reject) => {
             this.selectWhere({ from: commonInfo.table, select: '*', where: `name = '${name}'` })
+                .then(result => resolve(result))
+                .catch(err => reject(err));
+        });
+    }
+
+    //TODO: Find by name and find by email could be one funcion!
+    findByEmail(email) {
+        const commonInfo = this;
+
+        return new Promise((resolve, reject) => {
+            this.selectWhere({ from: commonInfo.table, select: 'name, id, password', where: `email = '${email}'` })
                 .then(result => resolve(result))
                 .catch(err => reject(err));
         });
