@@ -1,114 +1,67 @@
 const pool = require('./dbConnect');
 
+//TODO prevent mysql injection
+
+const errorHandler = err => {
+    err.statusCode = 400;
+    throw err;
+}
+
 module.exports = class {
     constructor(table) {
         this.table = table;
     };
 
-    selectWhere(params) {
-        const commonInfo = this;
+    async selectWhere(params) {
+        return new Promise(async(resolve, reject) => {
+            let conn;
+            try {
+                conn = await pool.getConnection();
+                let queryStr = `SELECT ${params.select} `;
+                queryStr += `FROM ${this.table} `;
 
-        return new Promise((resolve, reject) => {
-            pool.getConnection()
-                .then(conn => {
-                    let queryStr = `SELECT ${params.select} `;
-                    queryStr += `FROM ${commonInfo.table} `;
+                if (params.where) queryStr += `WHERE ${params.where}`;
 
-                    if (params.where) queryStr += `WHERE ${params.where}`;
+                const rows = await conn.query(queryStr);
+                conn.end();
 
-                    conn.query(queryStr)
-                        .then(rows => {
-                            conn.end();
-                            //console.log(rows); //[ {val: 1}, meta: ... ]
-                            //return conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-                            if (rows.length > 0) {
-                                const res = [...rows]; // Tira o meta com o operador spread 
-                                resolve(res);
-                            } else {
-                                resolve(false);
-                            }
-                        })
-                        .catch(err => {
-                            //handle error
-                            conn.end();
-                        })
+                // separa os dados 
 
-                }).catch(err => {
-                    //not connected
-                });
+                if (rows.length > 0) {
+                    const dataInRows = [...rows];
+                    dataInRows.foundSomething = true;
+                    resolve(dataInRows);
+                } else resolve({ foundSomething: false });
+
+            } catch (err) {
+                conn.end();
+
+                if (reject) reject(err)
+                errorHandler(err);
+            }
         });
     }
 
-
-    // selectWhere(params) {
-    //     //Retorna uma promise
-    //     const commonInfo = this;
-
-    //     return new Promise(function (resolve, reject) {
-    //         // Define as variaveis para poderem ser utilizadas no futuro
-    //         //const queryVar = [args];
-    //         let queryStr = `SELECT ${params.select} `;
-    //         queryStr += `FROM ${commonInfo.table} `;
-
-    //         if (params.where) queryStr += `WHERE ${params.where}`;
-
-
-    //         pool.getConnection()
-    //             .then(conn => { //Retorna a conexão
-    //                 return conn.query(queryStr);
-    //             }).then((rows) => { // Retorna o resultado
-    //                 console.log('oi')
-    //                 conn.end();
-    //                 process.exit();
-    //                 const res = rows;
-    //                 console.log(res);
-    //                 if (rows.length > 0) {
-    //                     const res = [...rows]; // Tira o meta com o operador spread 
-    //                     resolve(res);
-    //                 } else {
-    //                     resolve(false);
-    //                 }
-    //                 conn.end();
-
-    //             })
-    //             .catch(err => {
-    //                 // conn.end();
-    //                 console.log(err)
-    //                 resolve(err)
-    //             }); // Handle errors
-    //     });
-    // }
-
-    query(query, args) {
-        const commonInfo = this;
-
-        return new Promise((resolve, reject) => {
+    async query(query, args) {
+        return new Promise(async(resolve, reject) => {
             const queryVar = args;
             const queryStr = query;
+            let conn;
 
-            pool.getConnection()
-                .then(conn => {
-
-                    conn.query(queryStr, queryVar)
-                        .then((rows) => {
-                            conn.end();
-                            resolve(rows);
-                            console.log(rows); //[ {val: 1}, meta: ... ]
-                            //return conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-                        })
-                        .catch(err => {
-                            //handle error
-                            reject(err)
-                            conn.end();
-                        })
-
-                }).catch(err => {
-                    reject(err);
-                    //not connected
-                });
+            try {
+                conn = await pool.getConnection();
+                const rows = await conn.query(queryStr, queryVar);
+                conn.end();
+                resolve(rows);
+            } catch (err) {
+                conn.end();
+                if (reject) reject(err);
+                errorHandler(err);
+            }
         });
     }
 
+    //TODO: maybe refactor this to async await
     findByName(name) {
         const commonInfo = this;
 
@@ -119,23 +72,23 @@ module.exports = class {
         });
     }
 
+    //TODO: maybe refactor this to async await
     createNewUser(name, email) {
         const commonInfo = this;
 
         return new Promise((resolve, reject) => {
             this.query("INSERT INTO " + commonInfo.table + "(`name`) VALUES (?)", [name])
-                .then(result => {
-                    resolve(true);
-                })
+                .then(result => resolve(true))
                 .catch(err => reject(err));
         });
     }
 
+    //TODO: maybe refactor this to async await
     createUser(params) {
         const commonInfo = this;
 
         return new Promise((resolve, reject) => {
-            this.query("INSERT INTO " + commonInfo.table + "(`name`, `password`) VALUES (?, ?)", [params.name, params.password])
+            this.query("INSERT INTO " + commonInfo.table + "(`name`, `password`, `email`) VALUES (?, ?, ?)", [params.name, params.password, params.email])
                 .then(result => {
                     resolve(true);
                 })
@@ -143,6 +96,7 @@ module.exports = class {
         });
     }
 
+    //TODO: maybe refactor this to async await
     deleteById(id) {
         const commonInfo = this;
 
@@ -155,6 +109,7 @@ module.exports = class {
         });
     }
 
+    //TODO: maybe refactor this to async await
     updateById(id, params) {
         const commonInfo = this;
 
@@ -169,6 +124,30 @@ module.exports = class {
                     resolve(true);
                 })
                 .catch(err => reject(err));
+        });
+    }
+
+    /**
+     * @param {*} params attribute: name of the attribute, same as db - 
+     * @param {*} params myItem: item that you want to search
+     * return true if it is in use, and false if not
+     */
+    async isInUse(params) {
+        return new Promise(async(resolve, reject) => {
+            let conn;
+
+            try {
+                const response = await this.selectWhere({
+                    select: params.attribute,
+                    where: `${params.attribute} = '${params.myItem}'`
+                });
+
+                resolve(response.foundSomething);
+
+            } catch (err) {
+                if (reject) reject(err);
+                errorHandler();
+            }
         });
     }
 }

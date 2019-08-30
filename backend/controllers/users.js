@@ -9,7 +9,7 @@ exports.getAllUsers = async(req, res, next) => {
     res.status(200).json(allUsers);
 }
 
-exports.createUser = async function (req, res, next) {
+exports.createUser = async function(req, res, next) {
     const { name, email } = req.body;
 
     try {
@@ -21,12 +21,26 @@ exports.createUser = async function (req, res, next) {
     }
 };
 
-exports.create = async function (req, res, next) {
-    const { name, password } = req.body;
+exports.create = async function(req, res, next) {
+    const { name, password, email } = req.body;
+    const EMAIL_INVALID = 'EMAIL_INVALID';
+    // Verificar se o email esta cadastrado no sistema
+    const isNotAvaliable = await User.emailNotAvaliabel(email);
+    console.log(isNotAvaliable);
+
+    if (isNotAvaliable) {
+        res.status(200).json({
+            success: {
+                code: EMAIL_INVALID,
+                emailInUse: true
+            }
+        })
+
+        return;
+    }
 
     try {
-        const created = await User.createUser({ name, password });
-        console.log(created);
+        const created = await User.createUser({ name, password, email });
 
         res.status(200).json(created);
     } catch (err) {
@@ -35,7 +49,7 @@ exports.create = async function (req, res, next) {
     }
 };
 
-exports.login = async function (req, res, next) {
+exports.login = async function(req, res, next) {
     const { name, password } = req.body;
     let passwordCorrect = false;
     let user;

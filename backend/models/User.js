@@ -10,6 +10,13 @@ module.exports = class {
         this.email = email;
     }
 
+    static async emailNotAvaliabel(email) {
+        return dbFunc.isInUse({
+            attribute: 'email',
+            myItem: email
+        });
+    }
+
     static async findAllUser() {
         const users = await dbFunc.selectWhere({ select: '*' });
         return users;
@@ -42,4 +49,5 @@ module.exports = class {
 
         return dbFunc.createNewUser(params.name, params.password);
     }
+
 };

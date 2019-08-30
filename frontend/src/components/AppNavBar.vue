@@ -46,7 +46,7 @@ import { EventBus as global} from '@/store/EventBus';
 export default {
   computed: {
     userLoggedIn(){
-      global.userLoggedIn
+      return global.userLoggedIn;
     }
   }
 };

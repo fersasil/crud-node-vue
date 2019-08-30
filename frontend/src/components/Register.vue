@@ -1,54 +1,103 @@
 <template>
-  <div>
-    <b-form-input v-model="form.name" placeholder="Enter your name"></b-form-input>
-    <div v-if="form.name" class="mt-2">Value: {{ form.name }}</div>
-    <hr />
-    <b-form-input v-model="form.password" placeholder="Enter your password"></b-form-input>
-    <div v-if="form.password" class="mt-2">Value: {{ form.password }}</div>
-    <hr />
-    <b-button @click="fetchData">Register</b-button>
-    <hr v-if="form.result" />
-    <div v-if="form.result" class="mt-2">
-        <b-alert variant="success" show>User created!</b-alert>
-    </div>
-  </div>
+    <form
+        @submit="fetchData"
+        method="POST"
+    >
+        <p v-if="errors.length">
+            <b-alert
+                variant="warning"
+                show
+            >
+                <b>Por favor, corrija o(s) seguinte(s) erro(s):</b>
+                <ul>
+                    <li
+                        v-for="(error, i) in errors"
+                        :key="i"
+                    >{{ error.error}}</li>
+                </ul>
+            </b-alert>
+        </p>
+
+        <p v-if="success">
+            <b-alert
+                variant="success"
+                show
+            >
+                <b>Usuário criado com sucesso!</b>
+            </b-alert>
+        </p>
+
+        <b-form-input
+            v-model="name"
+            placeholder="Enter your name"
+            class="mb-4"
+        ></b-form-input>
+
+        <b-form-input
+            v-model="email"
+            placeholder="Enter your email"
+            class="mb-4"
+        ></b-form-input>
+        <b-form-input
+            v-model="password"
+            placeholder="Enter your password"
+        ></b-form-input>
+        <hr />
+        <b-button @click="fetchData">Register</b-button>
+    </form>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:3000";
 
 export default {
-  data() {
-    return {
-        form: {
+    data() {
+        return {
             name: "",
             password: "",
-            result: false
+            email: "",
+            errors: [],
+            success: ""
+        };
+    },
+    methods: {
+        fetchData(e) {
+            e.preventDefault();
+
+            this.errors = [];
+            this.success = false;
+
+            if (this.name === "") {
+                this.errors.push("O nome do produto é obrigatório.");
+            } else {
+                const config = {
+                    headers: { "Content-Type": "application/json" }
+                };
+
+                const data = {
+                    name: this.name,
+                    password: this.password,
+                    email: this.email
+                };
+                
+                console.log(data);
+
+                axios
+                    .post("create", data, config)
+                    .then(res => {
+                        if(res.data.success){
+                            this.errors.push({error: 'Email '});
+                        }
+                        else{
+                            this.success = true;
+                        }
+                    })
+                    .catch(err => {});
+            }
         }
-    };
-  },
-  methods: {
-      fetchData(){
-        const config = {
-            headers: { "Content-Type": "application/json" }
-        };
-
-        const data = {
-            name: this.form.name,
-            password: this.form.password
-        };
-
-        axios.post('create', data, config)
-        .then(res => {
-            if(res.data) this.form.result = true;
-        })
-        .catch(err => {
-
-        });
-      }
-  }
+    }
 };
 </script>
 
