@@ -42,13 +42,18 @@ module.exports = class {
         }
 
         res.email = email;
-        
+
         return res;
 
     }
 
     static async updateUserById(id, params) {
         return dbFunc.updateById(id, params);
+    }
+
+    static async findUserById(params) {
+        const select = 'name, email';
+        return dbFunc.findById({ id: params.id, select });
     }
 
     static async createUser(params) {

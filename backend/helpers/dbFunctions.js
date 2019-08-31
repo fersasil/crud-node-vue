@@ -138,6 +138,23 @@ module.exports = class {
         });
     }
 
+    async findById(params) {
+        return new Promise(async(resolve, reject) => {
+            try {
+                const response = await this.selectWhere({
+                    select: params.select,
+                    where: `id = '${params.id}'`
+                });
+
+                resolve(response[0]);
+
+            } catch (err) {
+                if (reject) reject(err);
+                errorHandler();
+            }
+        });
+    }
+
     /**
      * @param {*} params attribute: name of the attribute, same as db - 
      * @param {*} params myItem: item that you want to search

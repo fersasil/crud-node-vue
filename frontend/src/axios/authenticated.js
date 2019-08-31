@@ -1,14 +1,13 @@
 import axios from 'axios';
-import { EventBus as global} from '@/store/EventBus';
 
-
+const userDataEncoded = localStorage.getItem('userInfo');
+const userData = JSON.parse(atob(userDataEncoded));
 
 
 const headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer: ' + EventBus.userInfo.token
+    'Authorization': 'Bearer: ' + userData.token
 };
-
 
 export const axiosAuth = axios.create({
     baseURL: `http://localhost:3000/api/user`,

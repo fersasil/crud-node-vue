@@ -57,7 +57,6 @@ export default {
           let responseEncoded = Buffer.from(responseInString).toString(
             "base64"
           );
-          console.log(responseEncoded);
 
           localStorage.userInfo = responseEncoded;
           this.$router.push({ name: "Dashboard" });

@@ -6,9 +6,13 @@ export const EventBus = new Vue({
         userInfo: {}
     },
     methods: {
-        setLoginData(user){
+        setLoginData(user) {
             this.userInfo = user,
-            this.userLoggedIn = true;
+                this.userLoggedIn = true;
+        },
+        getThis() {
+            console.log(this.data);
+            return this.data
         }
-    }
+    },
 });

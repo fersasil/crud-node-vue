@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = "this is my test of a secret. It can be anything";
+const JWT_SECRET = "this is my test secret. It can be anything";
 
 module.exports = (req, res, next) => {
     //Formato do token!
@@ -9,9 +9,6 @@ module.exports = (req, res, next) => {
 
     const token = authorization ? authorization.split(' ')[1] : false;
     let decodedToken;
-
-    console.log(token);
-    process.exit();
 
     if (token) {
 
@@ -27,7 +24,6 @@ module.exports = (req, res, next) => {
 
     if (!decodedToken) {
         const error = { message: 'Not Authenticated' };
-        // error.statusCode = 401;
         res.status(401).json(error);
         return;
         //throw error;
@@ -35,9 +31,10 @@ module.exports = (req, res, next) => {
 
     //Colocar as informações do usuario no request
     const user = {
-        id: decodedToken.userId
+        id: decodedToken.id
     };
 
     req.user = user;
+
     next();
 }
