@@ -27,7 +27,6 @@ export default {
   },
   methods: {},
   created() {
-    console.log("OKA");
     axios.get("/users/u").then(res => {
       const users = [...res.data];
       const names = [];

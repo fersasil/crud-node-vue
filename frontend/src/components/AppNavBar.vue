@@ -33,26 +33,24 @@
 </template>
 
 <script>
-import { EventBus as global} from '@/store/EventBus';
+// import { EventBus as global} from '@/store/EventBus';
 
 
 export default {
   computed: {
     userLoggedIn(){
-      return global.userLoggedIn;
+      return this.$store.getters.userLoggedIn;
     },
     username(){
-      return global.userInfo.name
+      return this.$store.getters.getUserName;
     },
     userId(){
-      return global.userInfo.userId;
+      return this.$store.getters.getUserId;
     }
   },
   methods: {
     signOut(){
-      global.userLoggedIn = false;
-      global.userInfo = [];
-      this.$router.push({name: 'home'});
+      this.$store.dispatch('logout');
     }
   }
 };

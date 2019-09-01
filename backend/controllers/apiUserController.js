@@ -9,7 +9,7 @@ exports.getProfileInfo = async(req, res, next) => {
 
     try {
         const user = await User.findUserById({ id: id });
-        res.status(200).json({ user });
+        res.status(200).json({...user });
     } catch (err) {
         err.statusCode = 400;
         throw err;

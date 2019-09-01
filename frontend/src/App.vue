@@ -15,6 +15,9 @@ export default {
   name: 'App',
   components: {
     AppNavBar
+  },
+  created(){
+    this.$store.dispatch("isLoggedIn");
   }
 }
 </script>

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = "this is my test secret. It can be anything";
 
-const getToken = user =>{
+const getToken = user => {
     return jwt.sign({
         name: user.name,
         id: user.id
@@ -51,12 +51,13 @@ exports.create = async function(req, res, next) {
 
         //Id should be hashed?
 
-        const token = getToken({name, id: dbResonse.id});
+        const token = getToken({ name, id: dbResonse.id });
 
         res.status(200).json({
             id: dbResonse.insertId,
             name: name,
-            token: token
+            token: token,
+            expiresIn: 3600
         });
     } catch (err) {
         err.statusCode = 400;
@@ -68,14 +69,14 @@ exports.login = async function(req, res, next) {
     const { email, password } = req.body;
     let passwordCorrect = false;
     let user;
-    
+
 
     try {
         user = await User.getUserByEmail(email);
 
         if (!user) {
             //Usuario não encontrado!
-            res.status(401).json({ error: -1, message: 'Password or user incorrect' });        
+            res.status(401).json({ error: -1, message: 'Password or user incorrect' });
             return
         }
 
@@ -96,7 +97,8 @@ exports.login = async function(req, res, next) {
     res.status(200).json({
         token: token,
         userId: user[0].id,
-        name: user[0].name
+        name: user[0].name,
+        expiresIn: 3600
     });
 };
 

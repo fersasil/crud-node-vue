@@ -36,34 +36,14 @@ export default {
   },
   methods: {
     fetchData() {
-      (this.errors = []), (this.success = false);
-
-      const config = {
-        headers: { "Content-Type": "application/json" }
-      };
-
+      this.errors = []; 
+      this.success = false;
       const data = {
         email: this.email,
         password: this.password
       };
-
-      axios
-        .post("login", data, config)
-        .then(res => {
-          this.token = res.data.token;
-          this.success = true;
-
-          let responseInString = JSON.stringify(res.data);
-          let responseEncoded = Buffer.from(responseInString).toString(
-            "base64"
-          );
-
-          localStorage.userInfo = responseEncoded;
-          this.$router.push({ name: "Dashboard" });
-        })
-        .catch(err => {
-          this.errors.push({ error: "Email or password invalids!" });
-        });
+      
+      this.$store.dispatch('login', data);
     }
   }
 };
