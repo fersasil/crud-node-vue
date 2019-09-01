@@ -46,9 +46,16 @@ export default new Vuex.Store({
         },
         saveUser(state, userInfo) {
             state.userInfo = userInfo;
+        },
+        updateUser(state, userInfo) {
+            state.userName = userInfo.name;
         }
     },
     actions: {
+        updateUser({ commit }, updatedData) {
+            commit('updateUser', updatedData);
+        },
+
         isLoggedIn({ commit }) {
             const encodedData = localStorage.getItem("data");
 

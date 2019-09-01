@@ -126,15 +126,25 @@ module.exports = class {
 
         return new Promise((resolve, reject) => {
             //UPDATE `test`.`usuario` SET `name` = 'loca' WHERE (`id` = '6');
+            let verificador = false;
+
             let queryString = `UPDATE ${commonInfo.table} `;
             queryString += "SET "
             if (params.name !== '') {
-                queryString += "name = '" + params.name + "', ";
+                queryString += "name = '" + params.name + "' ";
+                verificador = true;
             }
+
             if (params.email !== '') {
+                if (verificador) {
+                    queryString += ', ';
+                    verificador = false;
+                }
+
                 queryString += "email = '" + params.email + "' ";
             }
-            queryString += `WHERE id = '${params.id}'`
+
+            queryString += `WHERE id = '${params.id}'`;
 
             this.query(queryString)
                 .then(res => {

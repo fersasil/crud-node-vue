@@ -107,20 +107,33 @@ export default {
             
             const data = {
                 id: this.$store.getters.getUserId,
-                name: this.name,
-                email: this.email
+                name: this.name !== this.defaultName ? this.name : '',
+                email: this.email !== this.defaultEmail ? this.email : ''
             }
 
             axiosAuth.put('update-user-profile', data)
             .then(res => {
-                //set this.default.name and this.name to the new data
-                // set the proprieties to its default
-                //this.$store.dispatch('updateUser');
+                if(!res.data.updated){
+                    alert("Algum erro estranho ocorreu")
+                    return;
+                }
+
+                if(this.name !== this.defaultName){
+                    const userData = {name: this.name};
+                    this.$store.dispatch('updateUser', userData);
+                }
+
+                this.stateEmail = false;
+                this.stateName = false;
+                this.defaultName = this.name; 
+                this.defaultEmail = this.email;
+
+                alert("Dados alterados com sucesso");
+                
             })
             .catch(err => {
                 console.log(err);
             });
-            alert("ok");
         }
     },
     created() {

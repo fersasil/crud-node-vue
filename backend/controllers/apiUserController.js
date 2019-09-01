@@ -18,12 +18,11 @@ exports.getProfileInfo = async(req, res, next) => {
 }
 
 exports.updateUserInfo = async(req, res, next) => {
-    console.log("OLA mundo");
     const userData = req.body;
 
     try {
         const response = await User.updateUser(userData);
-        res.status(200).json({ data: true });
+        res.status(200).json({ updated: true });
 
     } catch (err) {
         err.statusCode = 500;
