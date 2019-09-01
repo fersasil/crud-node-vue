@@ -7,7 +7,9 @@ const getDataStorage = _ => {
     }
 
     const decodedData = atob(encodedData);
-    return JSON.parse(decodedData);
+    const data = JSON.parse(decodedData);
+    data.expiresIn = new Date(data.expiresIn);
+    return data;
 }
 
 export const isLogged = (to, from, next) => {

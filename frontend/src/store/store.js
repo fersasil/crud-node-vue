@@ -58,6 +58,7 @@ export default new Vuex.Store({
 
             const decodedData = atob(encodedData);
             const data = JSON.parse(decodedData);
+            data.expiresIn = new Date(data.expiresIn);
 
             const now = new Date();
 
