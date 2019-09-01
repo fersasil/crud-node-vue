@@ -68,4 +68,8 @@ module.exports = class {
         return dbFunc.createNewUser(params.name, params.password);
     }
 
+    static async updateUser(userData) {
+        return dbFunc.updateById(userData);
+    }
+
 };

@@ -121,14 +121,20 @@ module.exports = class {
     }
 
     //TODO: maybe refactor this to async await
-    updateById(id, params) {
+    updateById(params) {
         const commonInfo = this;
 
         return new Promise((resolve, reject) => {
             //UPDATE `test`.`usuario` SET `name` = 'loca' WHERE (`id` = '6');
             let queryString = `UPDATE ${commonInfo.table} `;
-            queryString += "SET name = '" + params.name + "' ";
-            queryString += `WHERE id = '${id}'`
+            queryString += "SET "
+            if (params.name !== '') {
+                queryString += "name = '" + params.name + "', ";
+            }
+            if (params.email !== '') {
+                queryString += "email = '" + params.email + "' ";
+            }
+            queryString += `WHERE id = '${params.id}'`
 
             this.query(queryString)
                 .then(res => {
