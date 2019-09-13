@@ -39,9 +39,10 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
+import {axiosNormal as axios} from "../axios/authenticated";
 
-axios.defaults.baseURL = "http://localhost:3000";
+// axios.defaults.baseURL = "http://localhost:3000";
 
 export default {
     data() {
